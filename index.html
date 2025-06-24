@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Perfumes Capilares - Loja Online</title>
+<style>
+  /* Reset e estilos gerais */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #FADADD; /* rosa clean */
+    color: #6B4E4E; /* marrom rosado */
+  }
+  header {
+    background-color: #FFE4E1; /* rosé claro */
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 3px solid #DB7093; /* detalhe dourado escuro */
+    color: #8B6508; /* dourado */
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 2rem;
+    cursor: default;
+  }
+  main {
+    max-width: 960px;
+    margin: 2rem auto 200px auto; /* deixar espaço para rodapé fixo */
+    padding: 0 1rem;
+  }
+  .menu {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    background: #FFF0F5;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+  }
+  .menu button {
+    background: #DB7093;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .menu button:hover {
+    background: #c05a7e;
+  }
+
+  .products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: 2rem;
+  }
+  .product-card {
+    background: #FFF0F5; /* lavanda rosada */
+    border: 2px solid #DB7093; /* rosa dourado */
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(219,112,147,0.2);
+    position: relative;
+    transition: transform 0.2s ease;
+  }
+  .product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(219,112,147,0.35);
+  }
+  .product-card h2 {
+    margin: 0.5rem 0 0.3rem;
+    font-size: 1.3rem;
+    color: #8B6508;
+    cursor: pointer;
+  }
+  .product-card p {
+    margin: 0.2rem 0 1rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #6B4E4E;
+  }
+  .product-card img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button.add-to-cart {
+    background-color: #DB7093;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  button.add-to-cart:hover {
+    background-color: #c05a7e;
+  }
+  /* Favorito coração */
+  .favorite {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #ffffff;
+    text-shadow: 0 0 1px #db7093;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transition: color 0.3s ease;
+  }
+  .favorite.active {
+    color: #db7093;
+    animation: pulse 0.3s ease;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  /* Carrinho */
+  #cart {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    width: 320px;
+    max-height: 80vh;
+    background: #FFE4E1;
+    border: 3px solid #DB7093;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(219,112,147,0.5);
+    padding: 1rem;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+  }
+  #cart h3 {
+    margin-top: 0;
+    color: #8B6508;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  #cart ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+    flex-grow: 1;
+  }
+  #cart ul li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.7rem;
+    border-bottom: 1px solid #DB7093;
+    padding-bottom: 0.3rem;
+    font-weight: 600;
+  }
+  #cart ul li button {
+    background: transparent;
+    border: none;
+    color: #DB7093;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #cart .total {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #8B6508;
+    text-align: right;
+    margin-bottom: 1rem;
+  }
+  #cart button#checkout-btn {
+    background-color: #DB7093;
+    border: none;
+    padding: 0.8rem;
+    width: 100%;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+  }
+  #cart button#checkout-btn:hover {
+    background-color: #c05a7e;
+  }
+  /* Botão abrir carrinho */
+  #cart-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #DB7093;
+    color: white;
+    border: none;
+    padding: 0.8rem 1rem;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(219,112,147,0.5);
+    z-index: 1100;
+    transition: background-color 0.2s ease;
+  }
+  #cart-toggle:hover {
+    background-color: #c05a7e;
+  }
+
+  /* Modal PIX */
+  #pix-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  #pix-modal .modal-content {
+    background: #fff0f5;
+    border: 3px solid #DB7093;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+  }
+  #pix-modal h2 {
+    margin-top: 0;
+    color: #8B6508;
+  }
+  #pix-modal img {
+    max-width: 200px;
+    margin: 1rem 0;
+  }
+  #pix-modal button.close-modal {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #DB7093;
+    cursor: pointer;
+  }
+  #pix-modal p {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #6B4E4E;
+  }
+  #pix-modal .pix-key {
+    font-family: monospace;
+    background: #ffe4e1;
+    padding: 0.5rem;
+    border-radius: 6px;
+    user-select: all;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #8B6508;
+    cursor: pointer;
+  }
+
+  /* Mensagem WhatsApp */
+  #whatsapp-msg {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #6B4E4E;
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* Modal detalhe produto */
+  #product-detail-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+  }
+  #product-detail-modal .modal-content {
+    background: #fff0f5;
+    border: 3px solid #DB7093;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+    position: relative;
+  }
+  #product-detail-modal img {
+    max-width: 250px;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+  #product-detail-modal h2 {
+    margin-top: 0;
+    color: #8B6508;
+  }
+  #product-detail-modal p.price {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #6B4E4E;
+  }
+  #product-detail-modal p.bio {
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: #6B4E4E;
+    line-height: 1.4;
+  }
+  #product-detail-modal button.close-modal {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #DB7093;
+    cursor: pointer;
+  }
+
+  /* Rodapé fixo comentários */
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #FFE4E1;
+    padding: 1rem 2rem;
+    border-top: 3px solid #DB7093;
+    box-shadow: 0 -3px 10px rgba(219,112,147,0.2);
+    max-height: 180px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    z-index: 5000;
+  }
+  footer h3 {
+    text-align: center;
+    color: #8B6508;
+    margin-top: 0;
+  }
+  #comments-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1rem 0;
+    max-height: 100px;
+    overflow-y: auto;
+  }
+  #comments-list li {
+    border-bottom: 1px solid #DB7093;
+    padding: 0.3rem 0;
+    color: #6B4E4E;
+  }
+  #comments-list li p.comment-text {
+    margin: 0.2rem 0;
+  }
+  #comments-list li img {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 6px;
+    margin-top: 0.3rem;
+    object-fit: cover;
+  }
+
+  form#comment-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+  form#comment-form textarea {
+    flex: 1 1 70%;
+    resize: vertical;
+    min-height: 50px;
+    border-radius: 6px;
+    border: 2px solid #DB7093;
+    padding: 0.4rem;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  form#comment-form input[type="file"] {
+    flex: 1 1 20%;
+  }
+  form#comment-form button {
+    flex: 1 1 10%;
+    background: #DB7093;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  form#comment-form button:hover {
+    background: #c05a7e;
+  }
+
+  /* Seção representantes (fora do rodapé) */
+  .representatives {
+    max-width: 960px;
+    margin: 0 auto 2rem auto;
+    padding: 1rem;
+    background: #FFF0F5;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(219,112,147,0.25);
+  }
+  .representatives h2 {
+    text-align: center;
+    color: #8B6508;
+    margin-top: 0;
+  }
+  .rep-card {
+    background: #FFF0F5;
+    border: 2px solid #DB7093;
+    border-radius: 10px;
+    max-width: 360px;
+    margin: 1rem auto;
+    padding: 1rem;
+    color: #6B4E4E;
+    font-weight: 600;
+  }
+  .rep-card a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background: #25d366;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+
+  /* Responsividade */
+  @media(max-width: 480px){
+    #cart {
+      width: 90vw;
+      max-height: 60vh;
+      top: 60px;
+      right: 5%;
+    }
+    main {
+      margin: 2rem 1rem 220px 1rem;
+    }
+    .products {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    form#comment-form textarea {
+      flex: 1 1 100%;
+    }
+    form#comment-form input[type="file"], form#comment-form button {
+      flex: 1 1 48%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Perfumes Capilares</h1>
+</header>
+
+<main>
+  <nav class="menu" aria-label="Menu de categorias">
+    <button type="button" onclick="filterCategory('tudo')" aria-pressed="true">Tudo</button>
+    <button type="button" onclick="filterCategory('masculino')" aria-pressed="false">Masculino</button>
+    <button type="button" onclick="filterCategory('feminino')" aria-pressed="false">Feminino</button>
+    <button type="button" onclick="showRepresentatives()">Representantes</button>
+    <button type="button" onclick="filterFavorites()">❤️ Favoritos</button>
+  </nav>
+
+  <section class="products" id="products-section" aria-live="polite" aria-label="Lista de produtos">
+    <!-- Produtos renderizados aqui -->
+  </section>
+
+  <section class="representatives" id="representatives-section" style="display:none;">
+    <h2>Seja uma representante!</h2>
+    <div class="rep-card">
+      <strong>Leila Cunha - Ji-Paraná</strong><br />
+      <a href="https://wa.me/5569993804747" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+    </div>
+    <div class="rep-card">
+      <strong>Darlene Louzada - Jaru</strong><br />
+      <a href="https://wa.me/5569993817594" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+    </div>
+    <div class="rep-card">
+      <strong>Marlene Silvera - Urupá</strong><br />
+      <a href="https://wa.me/5569993682425" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+    </div>
+    <div class="rep-card">
+      <strong>Graccyely Apolinario - Machadinho</strong><br />
+      <a href="https://wa.me/12394068263" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+    </div>
+    <div class="rep-card">
+      <strong>Elisama Fernandes - Jaru</strong><br />
+      <a href="https://wa.me/5569999934301" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+    </div>
+    <div class="rep-card">
+      <strong>Anailde - Ji-Paraná</strong><br />
+      <a href="https://wa.me/5569993472195" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
+    </div>
+  </section>
+</main>
+
+<!-- Carrinho -->
+<button id="cart-toggle" aria-label="Abrir carrinho de compras">🛒</button>
+<aside id="cart" aria-label="Carrinho de compras" role="region" aria-live="polite" aria-relevant="additions removals">
+  <h3>Carrinho</h3>
+  <ul id="cart-items"></ul>
+  <p class="total" id="cart-total">Total: R$ 0,00</p>
+  <button id="checkout-btn" disabled>Finalizar compra</button>
+  <div id="whatsapp-msg"></div>
+</aside>
+
+<!-- Modal PIX -->
+<div id="pix-modal" role="dialog" aria-modal="true" aria-labelledby="pix-title" tabindex="-1">
+  <div class="modal-content">
+    <button class="close-modal" aria-label="Fechar modal PIX">&times;</button>
+    <h2 id="pix-title">Pagamento via PIX</h2>
+    <p>Use o QR Code abaixo para pagar:</p>
+    <img src="img/qr code.png" alt="QR Code PIX" />
+    <p class="pix-key" title="Clique para copiar a chave PIX">00020126360014BR.GOV.BCB.PIX0114+55629999999952040000530398654031005802BR5913Perfume Capilar6009Brasília62070503***6304B14F</p>
+    <p>Após o pagamento, envie uma mensagem no WhatsApp para confirmar e enviar sua localização:</p>
+    <a href="https://wa.me/5569993804747" target="_blank" rel="noopener noreferrer" style="display:inline-block; background:#25d366; color:white; padding:0.6rem 1.2rem; border-radius:6px; text-decoration:none; font-weight:bold;">Chamar no WhatsApp</a>
+    <div id="whatsapp-msg"></div>
+  </div>
+</div>
+
+<!-- Modal detalhe produto -->
+<div id="product-detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title" tabindex="-1">
+  <div class="modal-content">
+    <button class="close-modal" aria-label="Fechar detalhes">&times;</button>
+    <h2 id="detail-title"></h2>
+    <img src="" alt="" id="detail-img" />
+    <p class="price" id="detail-price"></p>
+    <p class="bio" id="detail-bio"></p>
+  </div>
+</div>
+
+<!-- Rodapé Comentários -->
+<footer>
+  <h3>Comentários</h3>
+  <ul id="comments-list" aria-live="polite" aria-label="Lista de comentários"></ul>
+  <form id="comment-form" aria-label="Formulário para adicionar comentário com fotos">
+    <textarea id="comment-text" placeholder="Escreva seu comentário..." required aria-required="true"></textarea>
+    <input type="file" id="comment-photo" accept="image/*" multiple aria-label="Adicionar fotos ao comentário (opcional)" />
+    <button type="submit">Enviar Comentário</button>
+  </form>
+</footer>
+
+<script>
+  // Produtos
+  const products = [
+    {
+      id: 1,
+      name: "Good",
+      price: 89.90,
+      category: "feminino",
+      bio: "Good é um perfume capilar delicado, com notas florais suaves que encantam e hidratam os fios.",
+      img: "img/good.perfume.jpeg.jpeg"
+    },
+    {
+      id: 2,
+      name: "Olly",
+      price: 86.90,
+      category: "feminino",
+      bio: "Olly proporciona frescor e brilho intenso, ideal para quem busca leveza e sofisticação.",
+      img: "img/olly.perfume.jpeg.jpeg"
+    },
+    {
+      id: 3,
+      name: "Lilac",
+      price: 84.90,
+      category: "feminino",
+      bio: "Lilac traz a elegância das flores lilás com aroma marcante e duradouro.",
+      img: "img/lilac.perfume.jpeg.jpeg"
+    },
+    {
+      id: 4,
+      name: "Diva",
+      price: 94.90,
+      category: "feminino",
+      bio: "Diva é para quem quer se destacar com perfume intenso e sofisticado.",
+      img: "img/diva.perfume.jpeg.jpeg"
+    },
+    {
+      id: 5,
+      name: "Musa",
+      price: 96.90,
+      category: "feminino",
+      bio: "Musa combina fragrâncias vibrantes com hidratação profunda para seus cabelos.",
+      img: "img/musa.perfume.jpeg.jpeg"
+    },
+    {
+      id: 6,
+      name: "Dileto",
+      price: 114.90,
+      category: "masculino",
+      bio: "Dileto é um perfume capilar masculino marcante, com aroma amadeirado e sofisticado para homens que buscam personalidade.",
+      img: "img/dileto.perfume.jpeg.jpeg"
+    }
+  ];
+
+  let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let comments = JSON.parse(localStorage.getItem('comments')) || [];
+
+  const productsSection = document.getElementById("products-section");
+  const repSection = document.getElementById("representatives-section");
+  const cartToggle = document.getElementById("cart-toggle");
+  const cartBox = document.getElementById("cart");
+  const cartItems = document.getElementById("cart-items");
+  const cartTotal = document.getElementById("cart-total");
+  const checkoutBtn = document.getElementById("checkout-btn");
+
+  const pixModal = document.getElementById("pix-modal");
+  const pixCloseBtn = pixModal.querySelector(".close-modal");
+
+  const productDetailModal = document.getElementById("product-detail-modal");
+  const detailCloseBtn = productDetailModal.querySelector(".close-modal");
+  const detailTitle = document.getElementById("detail-title");
+  const detailPrice = document.getElementById("detail-price");
+  const detailBio = document.getElementById("detail-bio");
+  const detailImg = document.getElementById("detail-img");
+
+  const commentForm = document.getElementById("comment-form");
+  const commentsList = document.getElementById("comments-list");
+  const commentText = document.getElementById("comment-text");
+  const commentPhoto = document.getElementById("comment-photo");
+
+  // Formatar preço em BRL
+  function formatPrice(price) {
+    return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  // Renderizar produtos filtrados
+  function renderProducts(filter = "tudo") {
+    productsSection.innerHTML = "";
+    repSection.style.display = "none";
+    productsSection.style.display = "grid";
+
+    let filteredProducts = products;
+    if(filter === "masculino"){
+      filteredProducts = products.filter(p => p.category === "masculino");
+    } else if(filter === "feminino"){
+      filteredProducts = products.filter(p => p.category === "feminino");
+    } else if(filter === "favoritos"){
+      filteredProducts = products.filter(p => favorites.includes(p.id));
+    }
+
+    if(filteredProducts.length === 0){
+      productsSection.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:#6B4E4E;'>Nenhum produto encontrado.</p>";
+      return;
+    }
+
+    filteredProducts.forEach(prod => {
+      const div = document.createElement("div");
+      div.className = "product-card";
+      div.innerHTML = `
+        <button class="favorite ${favorites.includes(prod.id) ? "active" : ""}" aria-label="Adicionar ${prod.name} aos favoritos" title="Favoritar" onclick="toggleFavorite(${prod.id})">❤️</button>
+        <img src="${prod.img}" alt="Imagem do perfume ${prod.name}" onclick="openProductDetail(${prod.id})" />
+        <h2 tabindex="0" role="button" aria-pressed="false" onclick="openProductDetail(${prod.id})" onkeypress="if(event.key==='Enter'){openProductDetail(${prod.id});}">${prod.name}</h2>
+        <p>${formatPrice(prod.price)}</p>
+        <button class="add-to-cart" onclick="addToCart(${prod.id})">Adicionar ao carrinho</button>
+      `;
+      productsSection.appendChild(div);
+    });
+  }
+
+  // Favoritos toggle
+  function toggleFavorite(id){
+    if(favorites.includes(id)){
+      favorites = favorites.filter(f => f !== id);
+    } else {
+      favorites.push(id);
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    renderProducts(currentFilter);
+  }
+
+  // Carrinho
+  function addToCart(id){
+    const existing = cart.find(item => item.id === id);
+    if(existing){
+      existing.qty++;
+    } else {
+      cart.push({ id, qty: 1 });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart();
+  }
+  function removeFromCart(id){
+    cart = cart.filter(item => item.id !== id);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart();
+  }
+  function updateCart(){
+    cartItems.innerHTML = "";
+    let total = 0;
+    cart.forEach(item => {
+      const prod = products.find(p => p.id === item.id);
+      if(!prod) return;
+      const li = document.createElement("li");
+      li.innerHTML = `${prod.name} x${item.qty} <button aria-label="Remover ${prod.name} do carrinho" onclick="removeFromCart(${prod.id})">x</button>`;
+      cartItems.appendChild(li);
+      total += prod.price * item.qty;
+    });
+    cartTotal.textContent = `Total: ${formatPrice(total)}`;
+    checkoutBtn.disabled = cart.length === 0;
+  }
+
+  // Filtrar categoria
+  let currentFilter = "tudo";
+  function filterCategory(cat){
+    currentFilter = cat;
+    renderProducts(cat);
+    updateMenuButtons(cat);
+  }
+  function updateMenuButtons(activeCat){
+    const buttons = document.querySelectorAll('.menu button');
+    buttons.forEach(btn => {
+      btn.setAttribute('aria-pressed', 'false');
+    });
+    if(activeCat === "favoritos"){
+      buttons[4].setAttribute('aria-pressed', 'true');
+    } else if(activeCat === "tudo"){
+      buttons[0].setAttribute('aria-pressed', 'true');
+    } else if(activeCat === "masculino"){
+      buttons[1].setAttribute('aria-pressed', 'true');
+    } else if(activeCat === "feminino"){
+      buttons[2].setAttribute('aria-pressed', 'true');
+    }
+  }
+
+  // Filtrar favoritos
+  function filterFavorites(){
+    currentFilter = "favoritos";
+    renderProducts("favoritos");
+    updateMenuButtons("favoritos");
+  }
+
+  // Mostrar representantes
+  function showRepresentatives(){
+    productsSection.style.display = "none";
+    repSection.style.display = "block";
+    updateMenuButtons(null);
+  }
+
+  // Abrir/fechar carrinho
+  cartToggle.addEventListener('click', () => {
+    if(cartBox.style.display === "flex"){
+      cartBox.style.display = "none";
+    } else {
+      cartBox.style.display = "flex";
+    }
+  });
+
+  // Abrir modal detalhes produto
+  function openProductDetail(id){
+    const prod = products.find(p => p.id === id);
+    if(!prod) return;
+    detailTitle.textContent = prod.name;
+    detailPrice.textContent = formatPrice(prod.price);
+    detailBio.textContent = prod.bio;
+    detailImg.src = prod.img;
+    detailImg.alt = `Imagem do perfume ${prod.name}`;
+    productDetailModal.style.display = "flex";
+    productDetailModal.focus();
+  }
+  detailCloseBtn.addEventListener("click", () => {
+    productDetailModal.style.display = "none";
+  });
+  productDetailModal.addEventListener("click", (e) => {
+    if(e.target === productDetailModal){
+      productDetailModal.style.display = "none";
+    }
+  });
+
+  // Checkout: abrir modal PIX
+  checkoutBtn.addEventListener("click", () => {
+    pixModal.style.display = "flex";
+    pixModal.focus();
+  });
+  pixCloseBtn.addEventListener("click", () => {
+    pixModal.style.display = "none";
+  });
+  pixModal.addEventListener("click", e => {
+    if(e.target === pixModal){
+      pixModal.style.display = "none";
+    }
+  });
+
+  // Comentários com fotos armazenados no localStorage
+  function renderComments(){
+    commentsList.innerHTML = "";
+    if(comments.length === 0){
+      commentsList.innerHTML = "<li>Nenhum comentário ainda. Seja o primeiro!</li>";
+      return;
+    }
+    comments.forEach(({text, photos}, i) => {
+      const li = document.createElement("li");
+      const p = document.createElement("p");
+      p.textContent = text;
+      p.className = "comment-text";
+      li.appendChild(p);
+      if(photos && photos.length){
+        photos.forEach(src => {
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = "Foto do comentário";
+          li.appendChild(img);
+        });
+      }
+      commentsList.appendChild(li);
+    });
+  }
+
+  // Enviar comentário
+  commentForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const text = commentText.value.trim();
+    if(!text) return alert("Escreva um comentário antes de enviar.");
+    const photosFiles = commentPhoto.files;
+
+    if(photosFiles.length > 0){
+      let photosSrcs = [];
+      let loaded = 0;
+      for(let i=0; i < photosFiles.length; i++){
+        const file = photosFiles[i];
+        const reader = new FileReader();
+        reader.onload = function(event){
+          photosSrcs.push(event.target.result);
+          loaded++;
+          if(loaded === photosFiles.length){
+            comments.push({text, photos: photosSrcs});
+            localStorage.setItem("comments", JSON.stringify(comments));
+            renderComments();
+            commentForm.reset();
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    } else {
+      comments.push({text, photos: []});
+      localStorage.setItem("comments", JSON.stringify(comments));
+      renderComments();
+      commentForm.reset();
+    }
+  });
+
+  // Inicialização
+  renderProducts();
+  updateCart();
+  renderComments();
+  updateMenuButtons("tudo");
+</script>
+
+</body>
+</html>
